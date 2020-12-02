@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">EasyChange</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_main">MainActivity</string>
+
+    <string name="publish">发布</string>
+    <string name="cancle">取消</string>
+    <string name="publish_hint">品牌、成色和入手渠道，转手原因...</string>
+    <string name="title">标题</string>
+    <!-- tabbar's button text-->
+    <string name="tab_home">首页</string>
+    <string name="tab_question">问答</string>
+    <string name="tab_chat">聊天</string>
+    <string name="tab_person">个人</string>
+
+    <string name="yiban_authorize_url">https://openapi.yiban.cn/oauth/authorize?client_id=ec8ae1a7c85a8633&amp;redirect_uri=http://www.wsjiu.com:8080/back&amp;state=query</string>
+    <string name="yiban_authorize_html_url">https://oauth.yiban.cn/code/html?client_id=ec8ae1a7c85a8633&amp;redirect_uri=http://www.wsjiu.com:8080/back&amp;state=query</string>
+
+    <string name="register_url">http://www.wsjiu.com:8080/register</string>
+    <string name="login_url">http://www.wsjiu.com:8080/login</string>
+    <string name="image_upload_url">http://www.wsjiu.com:8080/image/upload</string>
+    <string name="image_get_url">http://www.wsjiu.com:8080/image/get</string>
+    <string name="goods_publish_url">http://www.wsjiu.com:8080/goods/publish</string>
+</resources>
