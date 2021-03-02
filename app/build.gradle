@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.application'
+    id 'kotlin-android'
 }
 
 android {
@@ -36,9 +37,18 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation files('/home/wsjiu/Application/YBOpenApi.jar')
+    implementation project(path: ':annotationProcessor')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    annotationProcessor project(path: ':annotationProcessor')
+    //implementation files('/home/wsjiu/Application/YBOpenApi.jar')
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'com.alibaba:fastjson:1.1.55.android'
+    implementation "org.java-websocket:Java-WebSocket:1.5.1"
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.5'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
+    implementation 'com.contrarywind:Android-PickerView:4.1.9'
+
+    implementation 'io.agora.rtc:full-sdk:3.3.0'
 }

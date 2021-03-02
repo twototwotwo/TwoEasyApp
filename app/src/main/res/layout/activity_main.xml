@@ -1,23 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="cn.wsjiu.easychange.activity.MainActivity">
-
+    android:orientation="vertical"
+    android:theme="@style/ThemeOverlay.EasyChange.FullscreenContainer"
+    tools:context="cn.wsjiu.twoEasy.activity.MainActivity">
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"></androidx.viewpager.widget.ViewPager>
+        android:layout_height="0dp"
+        android:layout_weight="1.0"
+        android:layout_margin="0dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    </androidx.viewpager.widget.ViewPager>
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_bar"
+        app:tabSelectedTextColor="@color/water_blue"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom">
-
+        android:layout_height="50dp"
+        app:tabIndicatorHeight="0dp">
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -42,5 +46,4 @@
             android:text="个人"
             android:icon="@drawable/tab_person_icon_selector"/>
     </com.google.android.material.tabs.TabLayout>
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>

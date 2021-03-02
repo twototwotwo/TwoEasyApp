@@ -1,25 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <resources>
-    <string name="app_name">EasyChange</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="app_name">云蚤</string>
+    <string name="creator">powered by 三十六</string>
+    <string name="slogan">致力于发挥二手物品的余热</string>
     <string name="title_activity_main">MainActivity</string>
 
+    <!--发布页面的字符串-->
     <string name="publish">发布</string>
-    <string name="cancle">取消</string>
-    <string name="publish_hint">品牌、成色和入手渠道，转手原因...</string>
+    <string name="cancel">取消</string>
+    <string name="publish_hint">品牌、成色和入手渠道，转手原因&#8230;</string>
     <string name="title">标题</string>
+    <string name="add_image_hint">添加一些实物图来吸引买家吧！！！</string>
+
+    <!--评论dialog的字符串-->
+    <string name="comment_hint">发表你对交易过程及卖家信誉上的评价</string>
+
+
     <!-- tabbar's button text-->
     <string name="tab_home">首页</string>
-    <string name="tab_question">问答</string>
+    <string name="tab_search">搜索</string>
     <string name="tab_chat">聊天</string>
     <string name="tab_person">个人</string>
 
+    <!--服务端接口url-->
     <string name="yiban_authorize_url">https://openapi.yiban.cn/oauth/authorize?client_id=ec8ae1a7c85a8633&amp;redirect_uri=http://www.wsjiu.com:8080/back&amp;state=query</string>
     <string name="yiban_authorize_html_url">https://oauth.yiban.cn/code/html?client_id=ec8ae1a7c85a8633&amp;redirect_uri=http://www.wsjiu.com:8080/back&amp;state=query</string>
+    <string name="register_url">http://www.wsjiu.com:8080/user/register/</string>
+    <string name="login_url">http://www.wsjiu.com:8080/user/login/</string>
+    <string name="update_user_url">http://www.wsjiu.com:8080/user/update</string>
+    <string name="user_base_info_url">http://www.wsjiu.com:8080/user/getUsersBaseInfo</string>
+    <string name="follow_user_url">http://www.wsjiu.com:8080/user/follow/</string>
+    <string name="cancel_follow_user_url">http://www.wsjiu.com:8080/user/follow/cancel/</string>
+    <string name="start_url">http://www.wsjiu.com:8080/app/start/</string>
+    <string name="open_eye_call_url">http://www.wsjiu.com:8080/app/openEye/call/</string>
+    <string name="open_eye_connect_url">http://www.wsjiu.com:8080/app/openEye/connect/</string>
+    <string name="image_upload_url">http://www.wsjiu.com:8080/image/upload/</string>
+    <string name="image_get_url">http://www.wsjiu.com:8080/image/get/</string>
+    <string name="goods_publish_url">http://www.wsjiu.com:8080/goods/publish/</string>
+    <string name="goods_offline_url">http://www.wsjiu.com:8080/goods/offline/</string>
+    <string name="goods_online_url">http://www.wsjiu.com:8080/goods/online/</string>
+    <string name="goods_batch_get_url">http://www.wsjiu.com:8080/goods/getGoodses/</string>
+    <string name="goods_get_url">http://www.wsjiu.com:8080/goods/get/</string>
+    <string name="goods_get_with_user_url">http://www.wsjiu.com:8080/goods/getWithUser/</string>
+    <string name="goods_recommend_url">http://www.wsjiu.com:8080/goods/recommend/</string>
+    <string name="goods_search_url">http://www.wsjiu.com:8080/goods/search/</string>
+    <string name="price_subscribe_url">http://www.wsjiu.com:8080/goods/subscribePrice</string>
+    <string name="price_cancel_subscribe_url">http://www.wsjiu.com:8080/goods/cancelSubscribePrice</string>
+    <string name="subscribed_goods_url">http://www.wsjiu.com:8080/goods/querySubscribeByUserId</string>
+    <string name="order_create_url">http://www.wsjiu.com:8080/order/create</string>
+    <string name="order_finish_url">http://www.wsjiu.com:8080/order/finish</string>
+    <string name="order_cancel_url">http://www.wsjiu.com:8080/order/cancel</string>
+    <string name="order_update_express_number_url">http://www.wsjiu.com:8080/order/expressNumber</string>
+    <string name="order_comment_publish_url">http://www.wsjiu.com:8080/orderComment/publish</string>
+    <string name="order_comment_get_url">http://www.wsjiu.com:8080/orderComment/get</string>
+    <string name="message_get_url">http://www.wsjiu.com:8080/message/get</string>
+    <string name="webSocket_url">ws://www.wsjiu.com:8080/webSocket</string>
+    <!--
+    This string is used for square devices and overridden by hello_world in
+    values-round/strings.xml for round devices.
+    -->
+    <!--相关凭证或者app id/key-->
+    <string name="app_certificate">94b1913fffe5429a99ebe1e0ed0a5f40</string>
+    <string name="gao_de_api_key">a685ad496dc2523096a813a05b47b06f</string>
+    <string name="agora_app_id">e33923f1771a49e5bd6567f75fbb965e</string>
 
-    <string name="register_url">http://www.wsjiu.com:8080/register</string>
-    <string name="login_url">http://www.wsjiu.com:8080/login</string>
-    <string name="image_upload_url">http://www.wsjiu.com:8080/image/upload</string>
-    <string name="image_get_url">http://www.wsjiu.com:8080/image/get</string>
-    <string name="goods_publish_url">http://www.wsjiu.com:8080/goods/publish</string>
+    <!--广播地址-->
+    <string name="chat_message_broadcast">cn.wsjiu.twoEasy.webSocket.message</string>
+    <string name="video_connection_message_broadcast">cn.wsjiu.twoEasy.webSocket.videoConnectionMessage</string>
+    <!--通知的相关字符串-->
+    <string name="chat_message_channel_ID">cn.wsjiu.twoEasy.webSocket.message</string>
+    <string name="chat_message_channel_NAME">消息提醒</string>
 </resources>

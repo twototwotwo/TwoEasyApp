@@ -4,13 +4,27 @@
     android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="cn.wsjiu.easychange.activity.ui.main.HomeFragment">
-    <androidx.appcompat.widget.SearchView
+    android:background="@color/dim_white"
+    tools:context="cn.wsjiu.twoEasy.activity.ui.main.HomeFragment">
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_margin="20dp"
-        android:background="@drawable/shape_radius"
-        android:backgroundTint="@color/gray" />
-
+        android:layout_height="match_parent">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:paddingHorizontal="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+        </androidx.recyclerview.widget.RecyclerView>
+    </LinearLayout>
+    <ImageButton
+        android:id="@+id/open_publish_goods_activity_button"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="30dp"
+        android:background="@drawable/cycle_add_icon">
+    </ImageButton>
 </androidx.constraintlayout.widget.ConstraintLayout>

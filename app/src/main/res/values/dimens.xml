@@ -9,4 +9,5 @@
     <dimen name="text_size_small">15dp</dimen>
     <dimen name="text_size_middle">20dp</dimen>
     <dimen name="text_size_big">30dp</dimen>
+
 </resources>

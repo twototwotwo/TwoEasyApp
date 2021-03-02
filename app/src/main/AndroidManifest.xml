@@ -1,33 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="cn.wsjiu.easychange">
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    package="cn.wsjiu.twoEasy">
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-feature android:name="android.hardware.type.watch" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.ACCES S_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAG" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
     <application
+        android:name=".application.TWApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.EasyChange"
         android:usesCleartextTraffic="true">
+        <activity android:name=".activity.UserInfoActivity" />
+        <activity android:name=".activity.UserInfoEditActivity" />
+        <activity android:name=".activity.FollowedUserActivity" />
+        <activity android:name=".activity.VideoCallActivity" />
         <activity
-            android:name="cn.wsjiu.easychange.activity.MainActivity"
+            android:name=".activity.ChatActivity"
+            android:theme="@style/Theme.EasyChange.gray_white"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".activity.GoodsDetailActivity"
+            android:theme="@style/Theme.EasyChange" />
+        <activity android:name=".activity.PublishGoodsActivity" />
+        <activity
+            android:name=".activity.SearchGoodsActivity"
+            android:theme="@style/Theme.EasyChange" />
+        <activity
+            android:name=".activity.MainActivity"
             android:label="@string/title_activity_main"
-            android:theme="@style/Theme.EasyChange.NoActionBar">
-        </activity>
-        <activity android:name="cn.wsjiu.easychange.activity.LoginActivity" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.EasyChange.NoActionBar"
+            android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="cn.wsjiu.easychange.activity.WelcomeActivity"
+            android:name=".activity.LoginActivity"
+            android:theme="@style/Theme.EasyChange" />
+        <activity
+            android:name=".activity.WelcomeActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:theme="@style/Theme.EasyChange.Fullscreen">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
     </application>
-
 </manifest>
