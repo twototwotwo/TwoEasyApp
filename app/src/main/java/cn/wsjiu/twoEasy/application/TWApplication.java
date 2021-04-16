@@ -47,20 +47,5 @@ public class TWApplication extends Application {
     }
 
     private void init() {
-        // 本地数据库初始化
-        MessageDAO.create(this.getBaseContext(), "message",
-                null, 3);
-        SearchRecordDAO.create(this.getBaseContext(), "searchRecord",
-                null, 1);
-        // 初始化dp和px的转化
-        DensityUtils.scale = getApplicationContext().getResources().getDisplayMetrics().density;
-        // 初始化用户信息
-        UserUtils.init(this);
-        User user = UserUtils.getUser();
-        if(user != null && user.getUserId() != null) {
-            //初始化webSocket连接
-            String url = getResources().getString(R.string.webSocket_url);
-            IMWebSocket.init(url, user.getUserId(), getApplicationContext());
-        }
     }
 }

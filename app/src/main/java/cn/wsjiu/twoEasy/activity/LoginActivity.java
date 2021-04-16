@@ -39,6 +39,8 @@ public class LoginActivity extends AppCompatActivity {
     private final String USER = "user";
     private String accessToken = null;
 
+    private WebView authorizeWebView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,15 +143,15 @@ public class LoginActivity extends AppCompatActivity {
      * authorize event
      */
     public void authorize(View mview) {
-        WebView webView = findViewById(R.id.authorize_webview);
-        webView.setVisibility(View.VISIBLE);
-        WebSettings webSettings = webView.getSettings();
+        authorizeWebView = findViewById(R.id.authorize_webview);
+        authorizeWebView.setVisibility(View.VISIBLE);
+        WebSettings webSettings = authorizeWebView.getSettings();
         webSettings.setDomStorageEnabled(true);//主要是这句
         webSettings.setJavaScriptEnabled(true);//启用js
         webSettings.setBlockNetworkImage(false);//解决图片不显示
         webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
         webSettings.setLoadsImagesAutomatically(true);
-        webView.setWebViewClient(new WebViewClient() {
+        authorizeWebView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 if(url.equals(getResources().getString(R.string.yiban_authorize_html_url))) {
@@ -159,13 +161,13 @@ public class LoginActivity extends AppCompatActivity {
                     Handler handler = new Handler(getMainLooper(), (msg) -> {
                        return handleMessageForAuthorize(msg);
                     });
-                    AuthorizeRunnable callable = new AuthorizeRunnable(url, handler);
-                    ThreadPoolUtils.asynExecute(callable);
+                    AuthorizeRunnable runnable = new AuthorizeRunnable(url, handler);
+                    ThreadPoolUtils.asynExecute(runnable);
                 }
                 return true;
             }
         });
-        webView.loadUrl(getResources().getString(R.string.yiban_authorize_url));
+        authorizeWebView.loadUrl(getResources().getString(R.string.yiban_authorize_url));
     }
 
        /**
@@ -182,6 +184,7 @@ public class LoginActivity extends AppCompatActivity {
            if(result != null && result.isSuccess()) {
                accessToken = result.getData();
                Toast.makeText(getApplicationContext(), "授权成功", Toast.LENGTH_SHORT).show();
+               authorizeWebView.setVisibility(View.INVISIBLE);
                return true;
            }else {
                Toast.makeText(this, result.getMsg(), Toast.LENGTH_SHORT).show();

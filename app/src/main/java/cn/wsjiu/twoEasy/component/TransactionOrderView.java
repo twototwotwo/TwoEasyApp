@@ -137,6 +137,11 @@ public class TransactionOrderView extends LinearLayout {
         if(OrderState.TRANSACTION_IN.mask == order.getState()) {
             finishButton.setVisibility(VISIBLE);
             cancelButton.setVisibility(VISIBLE);
+            if(userSelfId == order.getSellerId()) {
+                finishButton.setVisibility(INVISIBLE);
+            }else {
+                cancelButton.setVisibility(INVISIBLE);
+            }
         }else {
             finishButton.setVisibility(INVISIBLE);
             cancelButton.setVisibility(INVISIBLE);
@@ -145,11 +150,6 @@ public class TransactionOrderView extends LinearLayout {
             commentButton.setVisibility(VISIBLE);
         }else {
             commentButton.setVisibility(INVISIBLE);
-        }
-        if(userSelfId == order.getSellerId()) {
-            finishButton.setVisibility(INVISIBLE);
-        }else {
-            finishButton.setVisibility(VISIBLE);
         }
 
         finishButton.setOnClickListener(this::cancelOrFinish);

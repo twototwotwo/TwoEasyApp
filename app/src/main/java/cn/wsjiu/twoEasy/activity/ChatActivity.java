@@ -91,6 +91,49 @@ public class ChatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Intent intent = getIntent();
+        if(intent == null) return;
+        chatUser = (User) intent.getSerializableExtra("user");
+        goods = (Goods) intent.getSerializableExtra("goods");
+        String chatId = intent.getStringExtra("chatId");
+        userSelfId = UserUtils.getUser().getUserId();
+        String action = intent.getAction();
+        if(chatId == null || chatId.length() == 0) {
+            if(goods == null || chatUser == null) return;
+            if(userSelfId > chatUser.getUserId()) {
+                chatId = chatUser.getUserId() + ":" + goods.getGoodsId() + ":" + userSelfId;
+            }else {
+                chatId = userSelfId + ":" + goods.getGoodsId() + ":" + chatUser.getUserId();
+            }
+        }
+        if(chatId.equals(this.chatId)) {
+            offset = 0;
+            loadLocalMessage();
+            return;
+        }else {
+            this.chatId = chatId;
+        }
+        String[] splits = chatId.split(":");
+        if(chatUser == null) {
+            int userId = Integer.parseInt(splits[0]);
+            if(userSelfId.equals(userId)) {
+                userId = Integer.parseInt(splits[2]);
+            }
+            chatUser = DataSourceUtils.getUser(userId);
+        }
+        if(goods == null) {
+            int goodsId = Integer.parseInt(splits[1]);
+            goods = DataSourceUtils.getGoods(goodsId);
+        }
+        if(chatUser == null || goods == null) {
+            finish();
+            return;
+        }
         init();
     }
 
@@ -111,36 +154,6 @@ public class ChatActivity extends AppCompatActivity {
      * 初始化
      */
     private void init() {
-        Intent intent = getIntent();
-        chatUser = (User) intent.getSerializableExtra("user");
-        goods = (Goods) intent.getSerializableExtra("goods");
-        chatId = intent.getStringExtra("chatId");
-        userSelfId = UserUtils.getUser().getUserId();
-        if(chatId == null || chatId.length() == 0) {
-            if(goods == null || chatUser == null) return;
-            if(userSelfId > chatUser.getUserId()) {
-                chatId = chatUser.getUserId() + ":" + goods.getGoodsId() + ":" + userSelfId;
-            }else {
-                chatId = userSelfId + ":" + goods.getGoodsId() + ":" + chatUser.getUserId();
-            }
-        }
-        String[] splits = chatId.split(":");
-        if(chatUser == null) {
-            int userId = Integer.parseInt(splits[0]);
-            if(userSelfId.equals(userId)) {
-                userId = Integer.parseInt(splits[2]);
-            }
-            chatUser = DataSourceUtils.getUser(userId);
-        }
-        if(goods == null) {
-            int goodsId = Integer.parseInt(splits[1]);
-            goods = DataSourceUtils.getGoods(goodsId);
-        }
-        if(chatUser == null || goods == null) {
-            finish();
-            return;
-        }
-
         MessageDAO.instance.updateChatMessageToRead(chatId);
         TextView topNameView = findViewById(R.id.top_name_view);
         topNameView.setText(chatUser.getUserName());
@@ -193,6 +206,9 @@ public class ChatActivity extends AppCompatActivity {
                     //缺少权限
                     return;
                 }
+                if(userSelfId.equals(chatUser.getUserId())) {
+                    return;
+                }
                 if(isOpenEye) {
                     closeEye();
                     return;
@@ -214,37 +230,51 @@ public class ChatActivity extends AppCompatActivity {
 
         inputView = findViewById(R.id.input_text_view);
 
-        messageRecyclerView = findViewById(R.id.message_recycler_view);
-        LinearLayoutManager manager = new LinearLayoutManager(this);
-        manager.setStackFromEnd(true);
-        manager.setReverseLayout(true);
-        manager.setOrientation(RecyclerView.VERTICAL);
-        messageRecyclerView.setLayoutManager(manager);
-        adapter = new MessageRecyclerAdapter(chatUser);
-        loadLocalMessage();
-        messageRecyclerView.setAdapter(adapter);
-        messageRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                if(newState == RecyclerView.SCROLL_STATE_SETTLING &&
-                        !recyclerView.canScrollVertically(-1 )) {
-                    loadLocalMessage();
+        if(adapter == null) {
+            messageRecyclerView = findViewById(R.id.message_recycler_view);
+            LinearLayoutManager manager = new LinearLayoutManager(this);
+            manager.setStackFromEnd(true);
+            manager.setReverseLayout(true);
+            manager.setOrientation(RecyclerView.VERTICAL);
+            messageRecyclerView.setLayoutManager(manager);
+            adapter = new MessageRecyclerAdapter(chatUser);
+            messageRecyclerView.setAdapter(adapter);
+            messageRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                    if(newState == RecyclerView.SCROLL_STATE_SETTLING &&
+                            !recyclerView.canScrollVertically(-1 )) {
+                        loadLocalMessage();
+                    }
                 }
-            }
-        });
+            });
+        }else {
+            adapter.clearItems();
+        }
         messageRecyclerView.scrollToPosition(adapter.getItemCount() - 1);
 
         // 广播接收器注册
-        receiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String payLoad = intent.getStringExtra("message");
-                Message message = JSONObject.parseObject(payLoad, Message.class);
-                receiveMessage(message);
-            }
-        };
-        IntentFilter intentFilter = new IntentFilter("cn.wsjiu.twoEasy.webSocket.chatMessage");
-        registerReceiver(receiver, intentFilter);
+        if(receiver == null) {
+            receiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    String payLoad = intent.getStringExtra("message");
+                    Message message = JSONObject.parseObject(payLoad, Message.class);
+                    if(chatId != null && chatId.equals(message.getChatId())) {
+                        adapter.addFirst(message);
+                        MessageDAO.instance.insertMessage(message);
+                        messageRecyclerView.scrollToPosition(0);
+                        abortBroadcast();
+                    }
+                }
+            };
+            IntentFilter intentFilter = new IntentFilter("cn.wsjiu.twoEasy.webSocket.chatMessage");
+            // 设置高优先级阻断广播
+            intentFilter.setPriority(100);
+            registerReceiver(receiver, intentFilter);
+        }
+        offset = 0;
+        loadLocalMessage();
         checkGoodsState();
     }
 
@@ -287,20 +317,14 @@ public class ChatActivity extends AppCompatActivity {
         }
         message.setRead(true);
         MessageDAO.instance.insertMessage(message);
-        receiveMessage(message);
+        adapter.addFirst(message);
+        messageRecyclerView.scrollToPosition(0);
 
         inputView.setText("");
-        inputView.clearFocus();
         InputMethodManager manager = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
         manager.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
     }
 
-    public void receiveMessage(Message message) {
-        if(chatId != null && chatId.equals(message.getChatId())) {
-            adapter.addFirst(message);
-            messageRecyclerView.scrollToPosition(0);
-        }
-    }
 
     /**
      * 检查物品状态是否为可购买

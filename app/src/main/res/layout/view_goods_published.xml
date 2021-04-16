@@ -32,18 +32,46 @@
                 android:layout_height="wrap_content"/>
             <TextView
                 android:id="@+id/sell_price"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="3dp"
                 android:textColor="@color/red"
                 android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <TextView
                 android:id="@+id/goods_want_info"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="3dp"
                 android:text="没有人感兴趣"
                 android:textSize="12sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
+            <LinearLayout
+                android:layout_marginTop="3dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <Button
+                    android:id="@+id/edit_button"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/horizontal_cycle_border"
+                    android:textColor="@color/black"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="5dp"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:text="编辑"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <Button
+                    android:id="@+id/off_or_on_button"
+                    android:background="@drawable/horizontal_cycle_border"
+                    android:textColor="@color/black"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="5dp"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:text="下架"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
         </LinearLayout>
         <TextView
             android:id="@+id/goods_state_view"
@@ -52,32 +80,6 @@
             android:padding="10dp"
             android:textColor="@color/red"
             android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        <Button
-            android:id="@+id/edit_button"
-            android:layout_marginEnd="100dp"
-            android:backgroundTint="@color/water_blue"
-            android:textColor="@color/white"
-            android:padding="10dp"
-            android:minHeight="0dp"
-            android:minWidth="0dp"
-            android:text="编辑"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-        <Button
-            android:id="@+id/off_or_on_button"
-            android:backgroundTint="@color/water_blue"
-            android:textColor="@color/white"
-            android:padding="10dp"
-            android:minHeight="0dp"
-            android:minWidth="0dp"
-            android:text="下架"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     </LinearLayout>

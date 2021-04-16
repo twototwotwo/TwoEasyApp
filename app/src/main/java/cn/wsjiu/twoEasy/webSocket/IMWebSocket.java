@@ -116,7 +116,7 @@ public class IMWebSocket extends WebSocketClient {
     public void receiveChatMessage(Message message) {
         Intent intent = new Intent(context.getResources().getString(R.string.chat_message_broadcast));
         intent.putExtra("message", JSONObject.toJSONString(message));
-        context.sendBroadcast(intent);
+        context.sendOrderedBroadcast(intent, null);
     }
 
     /**

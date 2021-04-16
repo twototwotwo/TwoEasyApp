@@ -44,6 +44,15 @@ public class UserUtils {
         }
     }
 
+    public static void destroy(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(USER, MODE_PRIVATE);
+        String userStr = sharedPreferences.getString(USER, null);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        editor.apply();
+        user = JSONObject.parseObject(userStr, User.class);
+    }
+
     public static User getUser() {
         return user;
     }

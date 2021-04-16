@@ -19,6 +19,7 @@ import java.util.Map;
 
 import cn.wsjiu.twoEasy.R;
 import cn.wsjiu.twoEasy.activity.FollowedUserActivity;
+import cn.wsjiu.twoEasy.activity.LoginActivity;
 import cn.wsjiu.twoEasy.activity.UserInfoEditActivity;
 import cn.wsjiu.twoEasy.adapter.valid.BaseValidDataAdapter;
 import cn.wsjiu.twoEasy.adapter.valid.ValidDataPublishedRecyclerAdapter;
@@ -127,6 +128,9 @@ public class  PersonFragment extends Fragment {
 
         Button editButton = rootView.findViewById(R.id.edit_button);
         editButton.setOnClickListener(this::edit);
+
+        Button logoutButton = rootView.findViewById(R.id.logout_button);
+        logoutButton.setOnClickListener(this::logout);
     }
 
     @Override
@@ -168,6 +172,14 @@ public class  PersonFragment extends Fragment {
     private void edit(View view) {
         Intent intent = new Intent();
         intent.setClass(getContext(), UserInfoEditActivity.class);
+        startActivity(intent);
+    }
+
+    private void logout(View view) {
+        Intent intent = new Intent();
+        intent.setClass(getContext(), LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        UserUtils.destroy(getContext());
         startActivity(intent);
     }
 }

@@ -54,6 +54,33 @@ public class Order {
      */
     private String phoneNumber;
 
+    /**
+     * 订单金额
+     */
+    private Float price;
+
+
+    /**
+     * 以下是冗余字段，用于特定场景
+     */
+    private String payPassword;
+
+    public String getPayPassword() {
+        return payPassword;
+    }
+
+    public void setPayPassword(String payPassword) {
+        this.payPassword = payPassword;
+    }
+
+    public Float getPrice() {
+        return price;
+    }
+
+    public void setPrice(Float price) {
+        this.price = price;
+    }
+
     public Integer getOrderId() {
         return orderId;
     }

@@ -32,7 +32,7 @@ public class GoodsPublishedView extends LinearLayout {
     private TextView wantInfo;
     private TextView goodsStateView;
     private Button offOrOnButton;
-
+    private Button editButton;
     private Goods goods;
 
     public GoodsPublishedView(Context context) {
@@ -61,7 +61,7 @@ public class GoodsPublishedView extends LinearLayout {
         wantInfo = findViewById(R.id.goods_want_info);
         goodsStateView = findViewById(R.id.goods_state_view);
 
-        Button editButton = findViewById(R.id.edit_button);
+        editButton = findViewById(R.id.edit_button);
         editButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -108,12 +108,14 @@ public class GoodsPublishedView extends LinearLayout {
         this.goods = goods;
         GoodsState goodsState = GoodsState.valueOf(goods.getState());
         offOrOnButton.setVisibility(VISIBLE);
+        editButton.setVisibility(VISIBLE);
         if(goodsState == GoodsState.UNSOLD) {
             offOrOnButton.setText("下架");
         }else if(goodsState == GoodsState.OFFLINE){
             offOrOnButton.setText("重新上架");
         }else {
             offOrOnButton.setVisibility(INVISIBLE);
+            editButton.setVisibility(INVISIBLE);
         }
         String coverUrl = getResources().getString(R.string.image_get_url)
                 + ImageUtils.getCoverByStr(goods.getImageUrl());

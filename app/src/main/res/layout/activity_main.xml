@@ -15,10 +15,15 @@
         android:layout_margin="0dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
     </androidx.viewpager.widget.ViewPager>
-
+    <LinearLayout
+        android:background="@color/gray_white"
+        android:layout_width="match_parent"
+        android:layout_height="1px"/>
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_bar"
         app:tabSelectedTextColor="@color/water_blue"
+        android:paddingTop="5dp"
+        android:background="@color/white"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         app:tabIndicatorHeight="0dp">
@@ -28,13 +33,11 @@
             android:text="首页"
             android:icon="@drawable/tab_home_icon_selector"
             android:focusable="true"/>
-
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="问答"
             android:icon="@drawable/tab_question_icon_selector"/>
-
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

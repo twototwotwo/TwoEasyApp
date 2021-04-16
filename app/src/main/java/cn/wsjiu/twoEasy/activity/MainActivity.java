@@ -38,6 +38,7 @@ import cn.wsjiu.twoEasy.R;
 import cn.wsjiu.twoEasy.activity.ui.main.ChatFragment;
 import cn.wsjiu.twoEasy.activity.ui.main.TabPagerAdapter;
 import cn.wsjiu.twoEasy.dao.MessageDAO;
+import cn.wsjiu.twoEasy.dao.SearchRecordDAO;
 import cn.wsjiu.twoEasy.entity.Goods;
 import cn.wsjiu.twoEasy.entity.IM.Message;
 import cn.wsjiu.twoEasy.entity.Order;
@@ -47,6 +48,7 @@ import cn.wsjiu.twoEasy.result.Result;
 import cn.wsjiu.twoEasy.thread.HttpGetRunnable;
 import cn.wsjiu.twoEasy.thread.threadPool.ThreadPoolUtils;
 import cn.wsjiu.twoEasy.util.DataSourceUtils;
+import cn.wsjiu.twoEasy.util.DensityUtils;
 import cn.wsjiu.twoEasy.util.UserUtils;
 import cn.wsjiu.twoEasy.webSocket.IMWebSocket;
 
@@ -85,6 +87,48 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // 本地数据库初始化
+        MessageDAO.create(this.getBaseContext(), "message",
+                null, 3);
+        SearchRecordDAO.create(this.getBaseContext(), "searchRecord",
+                null, 1);
+        // 初始化dp和px的转化
+        DensityUtils.scale = getApplicationContext().getResources().getDisplayMetrics().density;
+        // 初始化用户信息
+        UserUtils.init(this);
+        User user = UserUtils.getUser();
+        if(user != null && user.getUserId() != null) {
+            //初始化webSocket连接
+            String url = getResources().getString(R.string.webSocket_url);
+            IMWebSocket.init(url, user.getUserId(), getApplicationContext());
+        }
+
+        if(user != null && user.getUserId() != null) {
+            //获取一些基础数据
+            String url = getResources().getString(R.string.start_url);
+            url += "?userId=" + user.getUserId();
+            Handler handler = new Handler(getMainLooper(), this::handle);
+            HttpGetRunnable runnable = new HttpGetRunnable(url, handler);
+            ThreadPoolUtils.synExecute(runnable);
+        }
+
+        initLayout();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateUnReadCount(DataSourceUtils.unreadMessageCount);
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        unregisterReceiver(receiver);
+    }
+
+    private void initLayout() {
         setContentView(R.layout.activity_main);
 
         waterBlue = getResources().getColor(R.color.water_blue, null);
@@ -151,35 +195,13 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         IntentFilter intentFilter = new IntentFilter(getResources().getString(R.string.chat_message_broadcast));
+        // 低优先级，能够被阻断
+        intentFilter.setPriority(20);
         registerReceiver(receiver, intentFilter);
 
-        int unReadCount = MessageDAO.instance.queryUnReadCount();
-        updateUnReadCount(unReadCount);
-
-        // 初始化websocket
-        User user = UserUtils.getUser();
-        if(user != null && user.getUserId() != null) {
-            //获取一些基础数据
-            String url = getResources().getString(R.string.start_url);
-            url += "?userId=" + user.getUserId();
-            Handler handler = new Handler(getMainLooper(), this::handle);
-            HttpGetRunnable runnable = new HttpGetRunnable(url, handler);
-            ThreadPoolUtils.synExecute(runnable);
-        }
         ConnectivityManager manager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkRequest.Builder builder = new NetworkRequest.Builder();
         manager.registerNetworkCallback(builder.build(), new NetworkChangeCallback());
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void finish() {
-        super.finish();
-        unregisterReceiver(receiver);
     }
 
     public void receiveMessage(Message message) {
@@ -189,6 +211,7 @@ public class MainActivity extends AppCompatActivity {
         Integer receiveId = message.getReceiveId();
         if(receiveId != null && receiveId.equals(UserUtils.getUser().getUserId())) {
             updateUnReadCount(this.unReadCount + 1);
+            DataSourceUtils.unreadMessageCount += 1;
             notifyNewMessage(message);
             MessageDAO.instance.insertMessage(message);
         }
@@ -213,8 +236,9 @@ public class MainActivity extends AppCompatActivity {
         builder.setSmallIcon(R.mipmap.ic_launcher);
 
         Intent intent = new Intent();
-        intent.setClass(getApplicationContext(), ChatActivity.class);
+        intent.setClass(getApplicationContext(), MainActivity.class);
         intent.putExtra("chatId", message.getChatId());
+        intent.setAction("notification");
         if(Message.CONTENT_OPEN_EYE.equals(message.getContentType())) {
             builder.setContentTitle("开眼邀请");
             builder.setContentText(message.getContent());

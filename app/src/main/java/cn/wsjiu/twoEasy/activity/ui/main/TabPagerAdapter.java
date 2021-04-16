@@ -15,20 +15,16 @@ import java.util.List;
  */
 public class TabPagerAdapter extends FragmentPagerAdapter {
 
-    private List<Fragment> tabItemList;
-    private HomeFragment homeFragment;
-    private SearchGoodsFragment searchGoodsFragment;
-    private ChatFragment chatFragment;
-    private PersonFragment personFragment;
+    private final List<Fragment> tabItemList;
 
     public TabPagerAdapter(Context context, FragmentManager fm) {
         super(fm, FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
 
         tabItemList = new ArrayList<>(4);
-        homeFragment = new HomeFragment();
-        searchGoodsFragment = new SearchGoodsFragment();
-        chatFragment = new ChatFragment();
-        personFragment = new PersonFragment();
+        HomeFragment homeFragment = new HomeFragment();
+        SearchGoodsFragment searchGoodsFragment = new SearchGoodsFragment();
+        ChatFragment chatFragment = new ChatFragment();
+        PersonFragment personFragment = new PersonFragment();
 
         tabItemList.add(homeFragment);
         tabItemList.add(searchGoodsFragment);

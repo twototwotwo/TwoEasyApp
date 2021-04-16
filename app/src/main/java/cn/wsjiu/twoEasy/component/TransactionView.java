@@ -3,9 +3,13 @@ package cn.wsjiu.twoEasy.component;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -15,6 +19,8 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.Collections;
 
 import cn.wsjiu.twoEasy.R;
 import cn.wsjiu.twoEasy.activity.ChatActivity;
@@ -98,6 +104,8 @@ public class TransactionView extends FrameLayout {
             }
         });
 
+
+
         Button confirmButton = findViewById(R.id.confirm_button);
         confirmButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -120,6 +128,7 @@ public class TransactionView extends FrameLayout {
         order.setSellerId(goods.getUserId());
         order.setBuyerId(UserUtils.getUser().getUserId());
         order.setState(OrderState.TRANSACTION_IN.mask);
+        order.setPrice(goods.getSellPrice());
         EditText phoneNumberView = findViewById(R.id.phone_number_edit_text);
         String phoneNumber = phoneNumberView.getText().toString();
         if(phoneNumber.length() == 0) {
@@ -140,13 +149,8 @@ public class TransactionView extends FrameLayout {
         if(order.getTransactionMode() == null) {
             order.setTransactionMode(TransactionMode.TRANSACTION_CUSTOM_MODE.mode);
         }
-        EditText siteView = null;
-        if(order.getTransactionMode() == TransactionMode.TRANSACTION_EXPRESS_MODE.mode) {
-            siteView = findViewById(R.id.express_site_edit_text);
-        }else if(order.getTransactionMode() == TransactionMode.TRANSACTION_OFFLINE_MODE.mode) {
-            siteView = findViewById(R.id.offline_site_edit_text);
-        }
-        if(siteView != null) {
+        EditText siteView = findViewById(R.id.site_edit_text);
+        if(TransactionMode.TRANSACTION_CUSTOM_MODE.mode != order.getTransactionMode()) {
             String site = siteView.getText().toString();
             if(site.length() == 0) {
                 Toast.makeText(getContext(), "请填写地址", Toast.LENGTH_SHORT).show();
@@ -154,29 +158,30 @@ public class TransactionView extends FrameLayout {
             }
             order.setSite(site);
         }
-        String url = getResources().getString(R.string.order_create_url);
-        Handler handler = new Handler(getContext().getMainLooper(), this::handler);
-        HttpPostRunnable<Order, Void> runnable = new HttpPostRunnable<>(url, handler, order);
-        ThreadPoolUtils.asynExecute(runnable);
+        EditText payPasswordEditText = findViewById(R.id.pay_password_edit_text);
+        String payPassword = payPasswordEditText.getText().toString();
+        if(payPassword.length() < 6) {
+            Toast.makeText(getContext(), "请输入完整的支付密码", Toast.LENGTH_SHORT).show();
+        }else {
+            order.setPayPassword(payPassword);
+            String url = getResources().getString(R.string.order_create_url);
+            Handler handler = new Handler(getContext().getMainLooper(), this::handlerForCreateOrder);
+            HttpPostRunnable<Order, Void> runnable = new HttpPostRunnable<>(url, handler, order);
+            ThreadPoolUtils.asynExecute(runnable);
+        }
     }
 
     private void changeSiteView(int position) {
         String modeStr = adapter.getItem(position);
-        LinearLayout offlineSiteView = findViewById(R.id.offline_site_view);
-        LinearLayout expressSiteView = findViewById(R.id.express_site_view);
-        if(TransactionMode.TRANSACTION_OFFLINE_MODE.modeStr.equals(modeStr)) {
-            offlineSiteView.setVisibility(VISIBLE);
-            expressSiteView.setVisibility(GONE);
-        }else if(TransactionMode.TRANSACTION_EXPRESS_MODE.modeStr.equals(modeStr)){
-            offlineSiteView.setVisibility(GONE);
-            expressSiteView.setVisibility(VISIBLE);
+        LinearLayout siteView = findViewById(R.id.site_view);
+        if(TransactionMode.TRANSACTION_CUSTOM_MODE.modeStr.equals(modeStr)) {
+            siteView.setVisibility(GONE);
         }else {
-            offlineSiteView.setVisibility(GONE);
-            expressSiteView.setVisibility(GONE);
+            siteView.setVisibility(VISIBLE);
         }
     }
 
-    public boolean handler(Message message) {
+    public boolean handlerForCreateOrder(Message message) {
         Object object = message.obj;
         if(object instanceof Result) {
             Result<Void> result = (Result) object;

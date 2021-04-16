@@ -19,6 +19,7 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.alibaba.fastjson.JSONObject;
 
@@ -125,17 +126,49 @@ public class UserInfoEditActivity extends AppCompatActivity {
     }
 
     public void editFinish(View view) {
-        user.setUserNickName(nickNameEditView.getText().toString());
-        user.setDeclaration(declarationEditView.getText().toString());
+        User newUser = new User();
+        newUser.setUserNickName(nickNameEditView.getText().toString());
+        newUser.setDeclaration(declarationEditView.getText().toString());
+        newUser.setUserId(user.getUserId());
+        boolean hasEdit = false;
+        if(user.getUserNickName() == null || !user.getUserNickName().equals(newUser.getUserNickName())) {
+            hasEdit = true;
+        }
+        if(user.getDeclaration() == null || !user.getDeclaration().equals(newUser.getDeclaration())) {
+            hasEdit = true;
+        }
         if(headImage != null) {
             String base64Str = ImageUtils.decodeBitmapToBase64(headImage, ImageUtils.HEAD_IMAGE_TYPE);
             if(base64Str != null) {
-                user.setHeadUrl(base64Str);
+                newUser.setHeadUrl(base64Str);
+                hasEdit = true;
             }
+        }
+        EditText payPasswordEditText = findViewById(R.id.pay_password_edit_view);
+        String payPassword = payPasswordEditText.getText().toString();
+        if(!"".equals(payPassword)) {
+            if(payPassword.length() != 6) {
+                Toast.makeText(this, "请输入完整的支付密码", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            EditText newPayPasswordEditText = findViewById(R.id.new_pay_password_edit_view);
+            EditText confirmNewPayPasswordEditText = findViewById(R.id.confirm_new_pay_password_edit_view);
+            String newPayPassword = newPayPasswordEditText.getText().toString();
+            if(newPayPassword.length() == 6 && newPayPassword.equals(confirmNewPayPasswordEditText.getText().toString())) {
+                newUser.setNewPayPassword(newPayPassword);
+                newUser.setPayPassword(payPassword);
+            }else {
+                Toast.makeText(this, "新密码有误，请检查", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            hasEdit = true;
+        }
+        if(!hasEdit) {
+            return;
         }
         Handler handler = new Handler(this::handleForUpdate);
         String url = getResources().getString(R.string.update_user_url);
-        HttpPostRunnable<User, Void> runnable = new HttpPostRunnable<>(url, handler, user);
+        HttpPostRunnable<User, Void> runnable = new HttpPostRunnable<>(url, handler, newUser);
         ThreadPoolUtils.asynExecute(runnable);
         beanner = LoadingBeanner.make(this, DensityUtils.dpToPx(20), R.color.transparent);
         beanner.loading();
@@ -156,6 +189,8 @@ public class UserInfoEditActivity extends AppCompatActivity {
                 User user = userJSOnObject.toJavaObject(User.class);
                 UserUtils.updateUser(user, getBaseContext());
                 back(null);
+            }else {
+                Toast.makeText(getBaseContext(), result.getMsg(), Toast.LENGTH_SHORT).show();
             }
         }
         return true;

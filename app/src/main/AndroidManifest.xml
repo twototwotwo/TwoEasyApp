@@ -34,6 +34,7 @@
         <activity android:name=".activity.VideoCallActivity" />
         <activity
             android:name=".activity.ChatActivity"
+            android:launchMode="singleTop"
             android:theme="@style/Theme.EasyChange.gray_white"
             android:windowSoftInputMode="adjustPan" />
         <activity

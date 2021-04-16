@@ -67,4 +67,9 @@ public class MessageRecyclerAdapter extends RecyclerView.Adapter {
         this.messageList.addAll(messageList);
         notifyItemRangeInserted(getItemCount(), messageList.size());
     }
+
+    public void clearItems() {
+        messageList.clear();
+        notifyDataSetChanged();
+    }
 }

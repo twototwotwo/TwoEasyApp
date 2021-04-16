@@ -52,6 +52,18 @@
                     android:padding="5dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
+                <Button
+                    android:id="@+id/logout_button"
+                    android:background="@drawable/shape_radius_5dp"
+                    android:backgroundTint="@color/white"
+                    android:textColor="@color/black"
+                    android:text="注销"
+                    android:layout_marginStart="10dp"
+                    android:minHeight="0dp"
+                    android:minWidth="0dp"
+                    android:padding="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
                 <FrameLayout
                     android:layout_weight="1"
                     android:layout_width="0dp"
@@ -190,6 +202,7 @@
                 android:layout_height="wrap_content"/>
         </LinearLayout>
     </LinearLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/goods_recycler_view"
         android:layout_marginHorizontal="10dp"

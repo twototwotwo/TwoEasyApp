@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+import cn.wsjiu.twoEasy.dao.MessageDAO;
 import cn.wsjiu.twoEasy.entity.Goods;
 import cn.wsjiu.twoEasy.entity.Order;
 import cn.wsjiu.twoEasy.entity.OrderState;
@@ -21,32 +24,32 @@ public class DataSourceUtils {
      * key = goodsId
      * value = Goods
      */
-    public static Map<Integer, Goods> commonGoodsMap = new HashMap<>(8);
+    public static Map<Integer, Goods> commonGoodsMap = new ConcurrentHashMap<>(8);
     /**
      * 用户发布的物品
      * key = goodsId
      * value = Goods
      */
-    public static Map<Integer, Goods> publishGoodsMap = new HashMap<>(8);
+    public static Map<Integer, Goods> publishGoodsMap = new ConcurrentHashMap<>(8);
 
     /**
      * 订阅记录
      * key = goodsId
      * value = SubscribeRecord
      */
-    public static Map<Integer, SubscribeRecord> subscribeRecordMap = new HashMap<>(8);
+    public static Map<Integer, SubscribeRecord> subscribeRecordMap = new ConcurrentHashMap<>(8);
     /**
      * 用户信息
      * key =userId
      * value = User
      */
-    public static Map<Integer, User> userMap = new HashMap<>(8);
+    public static Map<Integer, User> userMap = new ConcurrentHashMap<>(8);
     /**
      * 订单
      * key = goodsId
      * value = Order
      */
-    public static Map<Integer, Order> orderMap = new HashMap<>();
+    public static Map<Integer, Order> orderMap = new ConcurrentHashMap<>();
 
     /**
      * 粉丝id集合
@@ -57,6 +60,8 @@ public class DataSourceUtils {
      * 已关注用户的id集合
      */
     public static Set<Integer> followedIdSet = new HashSet<>();
+
+    public static int unreadMessageCount = 0;
 
 
     public static void init(Map<Integer, Order> odMap,
@@ -71,6 +76,8 @@ public class DataSourceUtils {
         orderMap = odMap;
         userMap = uMap;
         followedIdSet = fdSet;
+
+        unreadMessageCount = MessageDAO.instance.queryUnReadCount();
     }
 
 

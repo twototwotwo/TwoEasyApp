@@ -64,7 +64,10 @@ public class UserChatView  extends LinearLayout {
                 Context context = userChatView.getContext();
                 if(context instanceof MainActivity) {
                     MainActivity activity = (MainActivity) context;
-                    activity.reduceUnReadCount(userChatView.getUnReadCount());
+                    DataSourceUtils.unreadMessageCount -= userChatView.getUnReadCount();
+                    if(DataSourceUtils.unreadMessageCount < 0) {
+                        DataSourceUtils.unreadMessageCount = 0;
+                    }
                 }
             }
         }
@@ -178,8 +181,6 @@ public class UserChatView  extends LinearLayout {
             String coverUrl = ImageUtils.getCoverByStr(goods.getImageUrl());
             coverUrl = getResources().getString(R.string.image_get_url) + coverUrl;
             goodsCover.setImageFromUrl(coverUrl);
-        }else {
-
         }
 
         if(chatUser != null) {

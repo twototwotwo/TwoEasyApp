@@ -5,9 +5,11 @@ import java.io.Serializable;
 
 public class User implements Serializable {
     private Integer userId;
+    private Integer cloudBean;
     private String yibanId;
     private String accountName;
     private String password;
+    private String payPassword;
     private String headUrl;
     private String userName;
     private String userNickName;
@@ -16,12 +18,41 @@ public class User implements Serializable {
     private String sex;
     private String declaration;
 
+    /**
+     * 以下是冗余字段，不属于用户的，用于某些特点场景
+     */
+    private String newPayPassword;
+
+    public String getNewPayPassword() {
+        return newPayPassword;
+    }
+
+    public void setNewPayPassword(String newPayPassword) {
+        this.newPayPassword = newPayPassword;
+    }
+
+    public String getPayPassword() {
+        return payPassword;
+    }
+
+    public void setPayPassword(String payPassword) {
+        this.payPassword = payPassword;
+    }
+
     public void setUserId(Integer userId) {
         this.userId = userId;
     }
 
     public String getDeclaration() {
         return declaration;
+    }
+
+    public Integer getCloudBean() {
+        return cloudBean;
+    }
+
+    public void setCloudBean(Integer cloudBean) {
+        this.cloudBean = cloudBean;
     }
 
     public void setDeclaration(String declaration) {

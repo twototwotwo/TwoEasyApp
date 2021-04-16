@@ -18,7 +18,12 @@ public enum TransactionMode{
     /**
      * 自定义,由双方协商
      */
-    TRANSACTION_CUSTOM_MODE(1 << 2, "自定义");
+    TRANSACTION_CUSTOM_MODE(1 << 2, "自定义"),
+
+    /**
+     * 自定义,由双方协商
+     */
+    TRANSACTION_ONLINE_MODE(1 << 3, "线上交易");
 
     public int mode;
     public String modeStr;
