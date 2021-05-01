@@ -117,13 +117,13 @@
         android:layout_width="match_parent"
         android:layout_height="40dp">
         <LinearLayout
-            android:id="@+id/click_up"
             android:onClick="clickUp"
             android:orientation="vertical"
             android:layout_width="wrap_content"
             android:layout_height="match_parent">
             <ImageView
-                android:src="@drawable/click_up"
+                android:id="@+id/click_up"
+                android:src="@drawable/no_up"
                 android:padding="0dp"
                 android:adjustViewBounds="true"
                 android:scaleType="fitXY"

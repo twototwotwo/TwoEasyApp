@@ -42,11 +42,15 @@
     <string name="goods_batch_get_url">http://www.wsjiu.com:8080/goods/getGoodses/</string>
     <string name="goods_get_url">http://www.wsjiu.com:8080/goods/get/</string>
     <string name="goods_get_with_user_url">http://www.wsjiu.com:8080/goods/getWithUser/</string>
+    <string name="goods_recommend_new_url">http://www.wsjiu.com:8080/goods/recommendNew/</string>
     <string name="goods_recommend_url">http://www.wsjiu.com:8080/goods/recommend/</string>
     <string name="goods_search_url">http://www.wsjiu.com:8080/goods/search/</string>
     <string name="price_subscribe_url">http://www.wsjiu.com:8080/goods/subscribePrice</string>
     <string name="price_cancel_subscribe_url">http://www.wsjiu.com:8080/goods/cancelSubscribePrice</string>
     <string name="subscribed_goods_url">http://www.wsjiu.com:8080/goods/querySubscribeByUserId</string>
+    <string name="up_goods_url">http://www.wsjiu.com:8080/goods/up/</string>
+    <string name="cancel_up_goods_url">http://www.wsjiu.com:8080/goods/cancelUp/</string>
+    <string name="rank_goods_url">http://www.wsjiu.com:8080/goods/rank/</string>
     <string name="order_create_url">http://www.wsjiu.com:8080/order/create</string>
     <string name="order_finish_url">http://www.wsjiu.com:8080/order/finish</string>
     <string name="order_cancel_url">http://www.wsjiu.com:8080/order/cancel</string>

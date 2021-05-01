@@ -91,17 +91,14 @@ public class ChatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
         Intent intent = getIntent();
         if(intent == null) return;
         chatUser = (User) intent.getSerializableExtra("user");
         goods = (Goods) intent.getSerializableExtra("goods");
         String chatId = intent.getStringExtra("chatId");
         userSelfId = UserUtils.getUser().getUserId();
+        if(chatUser == null || goods == null) finish();
         String action = intent.getAction();
         if(chatId == null || chatId.length() == 0) {
             if(goods == null || chatUser == null) return;
@@ -135,6 +132,11 @@ public class ChatActivity extends AppCompatActivity {
             return;
         }
         init();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override

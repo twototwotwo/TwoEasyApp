@@ -1,6 +1,8 @@
 package cn.wsjiu.twoEasy.activity.ui.main;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -42,17 +44,34 @@ import cn.wsjiu.twoEasy.util.UserUtils;
  * A placeholder fragment containing a simple view.
  */
 public class HomeFragment extends Fragment {
+    private RecyclerView recommendRecyclerView;
+    private RecyclerView latestRecyclerView;
+
     private View rootView;
-    private GoodsViewRecyclerAdapter adapter;
+    private GoodsViewRecyclerAdapter recommendAdapter;
+    private GoodsViewRecyclerAdapter latestAdapter;
+
+    private View latestButton;
+    private View recommendButton;
 
     /**
      * 是否正在异步进行推荐物品信息获取
      */
     private boolean isRecommend = false;
+
+    /**
+     * 是否正在异步进行最新物品信息获取
+     */
+    private boolean isGetLatest = false;
     /**
      * 推荐物品请求的参数对象
      */
     private RecommendRequest recommendRequest;
+
+    /**
+     * 推荐最新物品请求的参数对象
+     */
+    private RecommendRequest latestRequest;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,14 +98,36 @@ public class HomeFragment extends Fragment {
                 startActivity(intent);
             }
         });
-        RecyclerView recyclerView = rootView.findViewById(R.id.recycler_view);
-        recyclerView.addItemDecoration(new SpaceDecoration(SpaceDecoration.ALL));
-        adapter = new GoodsViewRecyclerAdapter();
-        recyclerView.setAdapter(adapter);
+
+        // 初始化最新物品的recycler
+        latestRecyclerView = rootView.findViewById(R.id.latest_goods_recycler_view);
+        latestRecyclerView.addItemDecoration(new SpaceDecoration(SpaceDecoration.ALL));
+        latestAdapter = new GoodsViewRecyclerAdapter();
+        latestRecyclerView.setAdapter(latestAdapter);
         StaggeredGridLayoutManager gridLayoutManager =
                 new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(gridLayoutManager);
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        latestRecyclerView.setLayoutManager(gridLayoutManager);
+        latestRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if(newState == RecyclerView.SCROLL_STATE_SETTLING &&
+                        !recyclerView.canScrollVertically(1) && !isGetLatest) {
+                    getLatestGoods();
+                }
+            }
+        });
+        if(!isGetLatest) getLatestGoods();
+
+        // 初始化推荐物品的recycler
+        recommendRecyclerView = rootView.findViewById(R.id.recommend_goods_recycler_view);
+        recommendRecyclerView.addItemDecoration(new SpaceDecoration(SpaceDecoration.ALL));
+        recommendAdapter = new GoodsViewRecyclerAdapter();
+        recommendRecyclerView.setAdapter(recommendAdapter);
+        StaggeredGridLayoutManager recommendLayoutManager =
+                new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        recommendRecyclerView.setLayoutManager(recommendLayoutManager);
+        recommendRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
@@ -97,24 +138,28 @@ public class HomeFragment extends Fragment {
             }
         });
         if(!isRecommend) recommendGoods();
+
+        latestButton = rootView.findViewById(R.id.latest_goods_button);
+        latestButton.setOnClickListener(this::latestOrRecommend);
+        recommendButton = rootView.findViewById(R.id.recommend_goods_button);
+        recommendButton.setOnClickListener(this::latestOrRecommend);
     }
 
-
     /**
-     * 异步获取推荐物品
+     * 异步分页获取最新物品
      */
-    private void recommendGoods() {
-        if(adapter.isEnd() || isRecommend) return;
-        isRecommend = true;
-        if(recommendRequest == null) {
-            recommendRequest = new RecommendRequest();
-            recommendRequest.setUserId(UserUtils.getUser().getUserId());
+    private void getLatestGoods() {
+        if(latestAdapter.isEnd() || isGetLatest) return;
+        isGetLatest = true;
+        if(latestRequest == null) {
+            latestRequest = new RecommendRequest();
+            latestRequest.setUserId(UserUtils.getUser().getUserId());
         }
-        recommendRequest.setPage(recommendRequest.getPage() + 1);
-        String url = getResources().getString(R.string.goods_recommend_url);
+        latestRequest.setPage(latestRequest.getPage() + 1);
+        String url = getResources().getString(R.string.goods_recommend_new_url);
         Handler handler = new Handler(getActivity().getMainLooper(), this::handle);
         HttpPostRunnable<RecommendRequest, String> httpPostRunnable =
-                new HttpPostRunnable<>(url, handler, recommendRequest);
+                new HttpPostRunnable<>(url, handler, latestRequest);
         ThreadPoolUtils.asynExecute(httpPostRunnable);
     }
 
@@ -138,14 +183,14 @@ public class HomeFragment extends Fragment {
                 JSONArray goodsJSONArray = dataJSONObject.getJSONArray(goodsKey);
                 if (goodsJSONArray == null || goodsJSONArray.size() == 0) {
                     //TODO 取完数据
-                    adapter.setEnd(true);
+                    latestAdapter.setEnd(true);
                     return false;
                 }
                 for(int i = 0; i < goodsJSONArray.size(); i++) {
                     list.add(goodsJSONArray.getObject(i, Goods.class));
                 }
                 if(list.size() < recommendRequest.getPageSize()) {
-                    adapter.setEnd(true);
+                    latestAdapter.setEnd(true);
                 }
                 String userKey = "user";
                 JSONObject usersJSOBject = dataJSONObject.getJSONObject(userKey);
@@ -156,11 +201,90 @@ public class HomeFragment extends Fragment {
                     }
                 }
             }
-            adapter.addItems(list, userMap);
+            latestAdapter.addItems(list, userMap);
+            isGetLatest = false;
+            return true;
+        }
+        isGetLatest = false;
+        return false;
+    }
+
+    /**
+     * 异步分页获取推荐物品
+     */
+    private void recommendGoods() {
+        if(recommendAdapter.isEnd() || isRecommend) return;
+        isRecommend = true;
+        if(recommendRequest == null) {
+            recommendRequest = new RecommendRequest();
+            recommendRequest.setUserId(UserUtils.getUser().getUserId());
+            recommendRequest.setUserProfile("小米 64G");
+        }
+        recommendRequest.setPage(recommendRequest.getPage() + 1);
+        String url = getResources().getString(R.string.goods_recommend_url);
+        Handler handler = new Handler(getActivity().getMainLooper(), this::handleForRecommend);
+        HttpPostRunnable<RecommendRequest, String> httpPostRunnable =
+                new HttpPostRunnable<>(url, handler, recommendRequest);
+        ThreadPoolUtils.asynExecute(httpPostRunnable);
+    }
+
+    /**
+     * 异步回调处理
+     * @param msg 回调信息
+     * @return
+     */
+    private boolean handleForRecommend(Message msg) {
+        Object obj = msg.obj;
+        Result<JSONObject> result = null;
+        List<Goods> list = new ArrayList<>();
+        Map<Integer, User> userMap = new HashMap<>();
+        if (obj instanceof Result) {
+            result = (Result<JSONObject>) obj;
+        }
+        if(result != null && result.isSuccess()) {
+            JSONObject dataJSONObject = result.getData();
+            if(dataJSONObject != null) {
+                String goodsKey = "goods";
+                JSONArray goodsJSONArray = dataJSONObject.getJSONArray(goodsKey);
+                if (goodsJSONArray == null || goodsJSONArray.size() == 0) {
+                    //TODO 取完数据
+                    recommendAdapter.setEnd(true);
+                    return false;
+                }
+                for(int i = 0; i < goodsJSONArray.size(); i++) {
+                    list.add(goodsJSONArray.getObject(i, Goods.class));
+                }
+                if(list.size() < recommendRequest.getPageSize()) {
+                    recommendAdapter.setEnd(true);
+                }
+                String userKey = "user";
+                JSONObject usersJSOBject = dataJSONObject.getJSONObject(userKey);
+                for(String key : usersJSOBject.keySet()) {
+                    User user = usersJSOBject.getObject(key, User.class);
+                    if(user != null) {
+                        userMap.put(Integer.parseInt(key), user);
+                    }
+                }
+            }
+            recommendAdapter.addItems(list, userMap);
             isRecommend = false;
             return true;
         }
         isRecommend = false;
         return false;
+    }
+
+    private void latestOrRecommend(View view) {
+        if(view == recommendButton) {
+            recommendButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.water_blue, null)));
+            latestButton.setBackgroundTintList(ColorStateList.valueOf(Color.TRANSPARENT));
+            recommendRecyclerView.setVisibility(View.VISIBLE);
+            latestRecyclerView.setVisibility(View.INVISIBLE);
+        }else {
+            latestButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.water_blue, null)));
+            recommendButton.setBackgroundTintList(ColorStateList.valueOf(Color.TRANSPARENT));
+            recommendRecyclerView.setVisibility(View.INVISIBLE);
+            latestRecyclerView.setVisibility(View.VISIBLE);
+        }
     }
 }

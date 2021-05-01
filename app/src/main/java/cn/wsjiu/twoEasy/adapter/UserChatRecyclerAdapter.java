@@ -52,8 +52,17 @@ public class UserChatRecyclerAdapter extends RecyclerView.Adapter {
     }
 
     public void addAll(List<String> chatIdList) {
-        this.chatIdList.addAll(chatIdList);
-        notifyDataSetChanged();
+        boolean haveNew = false;
+        for (String chatId : chatIdList
+             ) {
+            if (!this.chatIdList.contains(chatId)) {
+                this.chatIdList.add(chatId);
+                haveNew = true;
+            }
+        }
+        if (haveNew) {
+            notifyDataSetChanged();
+        }
     }
 
     public int getPosition(String chatId) {
@@ -75,10 +84,10 @@ public class UserChatRecyclerAdapter extends RecyclerView.Adapter {
             String[] splits = chatId.split(":");
             int goodsId = Integer.parseInt(splits[1]);
             Order order = DataSourceUtils.getOrder(goodsId);
-            if(order == null) {
-                count += 1<<8;
-            }else if(order.getState() == OrderState.TRANSACTION_IN.mask) {
+            if(order != null && order.getState() == OrderState.TRANSACTION_IN.mask) {
                 count++;
+            }else {
+                count += 1<<8;
             }
         }
         return count;

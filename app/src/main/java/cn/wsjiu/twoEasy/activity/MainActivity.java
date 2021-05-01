@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import cn.wsjiu.twoEasy.R;
 import cn.wsjiu.twoEasy.activity.ui.main.ChatFragment;
@@ -283,7 +284,7 @@ public class MainActivity extends AppCompatActivity {
         if(result.isSuccess()) {
             JSONObject dataJSONObject = (JSONObject) result.getData();
             JSONArray recordJSONArray = dataJSONObject.getJSONArray("subscribeRecord");
-            Map<Integer, SubscribeRecord> subscribeRecordMap = new HashMap<>();
+            Map<Integer, SubscribeRecord> subscribeRecordMap = new ConcurrentHashMap<>();
             if(recordJSONArray != null) {
                 for(int i =0 ; i < recordJSONArray.size(); i++) {
                     SubscribeRecord record = recordJSONArray.getObject(i, SubscribeRecord.class);
@@ -292,7 +293,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             JSONArray orderJSONArray = dataJSONObject.getJSONArray("order");
-            Map<Integer, Order> orderMap = new HashMap<>();
+            Map<Integer, Order> orderMap = new ConcurrentHashMap<>();
             if(orderJSONArray != null) {
                 for (int i = 0; i < orderJSONArray.size(); i++) {
                     Order order = orderJSONArray.getObject(i, Order.class);
@@ -301,7 +302,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             JSONObject userJSONObject = dataJSONObject.getJSONObject("user");
-            Map<Integer, User> userMap = new HashMap<>();
+            Map<Integer, User> userMap = new ConcurrentHashMap<>();
             if(userJSONObject != null) {
                 for (String userId : userJSONObject.keySet()
                 ) {
@@ -311,7 +312,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             JSONObject subscribeJSONObject = dataJSONObject.getJSONObject("commonGoods");
-            Map<Integer, Goods> commonGoodsMap = new HashMap<>();
+            Map<Integer, Goods> commonGoodsMap = new ConcurrentHashMap<>();
             if(subscribeJSONObject != null) {
                 for(String key : subscribeJSONObject.keySet()) {
                     Goods goods = subscribeJSONObject.getObject(key, Goods.class);
@@ -320,7 +321,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             JSONArray publishJSONArray = dataJSONObject.getJSONArray("publishGoods");
-            Map<Integer, Goods> publishMap = new HashMap<>();
+            Map<Integer, Goods> publishMap = new ConcurrentHashMap<>();
             if(publishJSONArray != null) {
                 for(int i = 0; i < publishJSONArray.size(); i++) {
                     Goods goods = publishJSONArray.getObject(i, Goods.class);
@@ -335,7 +336,14 @@ public class MainActivity extends AppCompatActivity {
                     followedIdSet.add(followedIdJSONArray.getIntValue(i));
                 }
             }
-            DataSourceUtils.init(orderMap, subscribeRecordMap, userMap, commonGoodsMap, publishMap, followedIdSet);
+            JSONArray upIdJSONArray = dataJSONObject.getJSONArray("upId");
+            Set<Integer> upIdSet = new HashSet<>();
+            if(upIdJSONArray != null) {
+                for(int i = 0; i < upIdJSONArray.size(); i++) {
+                    upIdSet.add(upIdJSONArray.getIntValue(i));
+                }
+            }
+            DataSourceUtils.init(orderMap, subscribeRecordMap, userMap, commonGoodsMap, publishMap, followedIdSet, upIdSet);
         }
         return true;
     }

@@ -46,7 +46,7 @@ public class GoodsDetailActivity extends AppCompatActivity {
      */
     private boolean isRun = false;
 
-    private Button wantButton;
+    private Button upButton;
     private Button followButton;
 
     @Override
@@ -57,7 +57,7 @@ public class GoodsDetailActivity extends AppCompatActivity {
     }
 
     /**
-     * 初始化操作
+     * 初始化
      */
     private void init() {
         Intent intent = getIntent();
@@ -125,12 +125,18 @@ public class GoodsDetailActivity extends AppCompatActivity {
             priceDownImage.setBackgroundResource(R.drawable.notice);
         }
 
+        ImageView upImage = findViewById(R.id.click_up);
+        if(DataSourceUtils.checkIsUp(goods.getGoodsId())) {
+            upImage.setBackgroundResource(R.drawable.up);
+        }
+
         followButton = findViewById(R.id.follow_button);
         if(DataSourceUtils.checkIsFollow(user.getUserId())) {
             followButton.setText("已关注");
         }else {
             followButton.setText("+关注");
         }
+
     }
 
     public void want(View view) {
@@ -146,7 +152,20 @@ public class GoodsDetailActivity extends AppCompatActivity {
     }
 
     public void clickUp(View view) {
-
+        if (isRun) return;
+        else isRun = true;
+        String url;
+        Handler handler;
+        if (DataSourceUtils.checkIsUp(goods.getGoodsId())) {
+            url = getResources().getString(R.string.cancel_up_goods_url);
+            handler = new Handler(getMainLooper(), this::handleForCancelUp);
+        }else {
+            url = getResources().getString(R.string.up_goods_url);
+            handler = new Handler(getMainLooper(), this::handleForUp);
+        }
+        url += "?userId=" + user.getUserId() + "&goodsId=" + goods.getGoodsId();
+        HttpGetRunnable runnable = new HttpGetRunnable(url, handler);
+        ThreadPoolUtils.asynExecute(runnable);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -224,6 +243,34 @@ public class GoodsDetailActivity extends AppCompatActivity {
             }
         }else {
             Toast.makeText(getBaseContext(), result.getMsg(), Toast.LENGTH_SHORT).show();
+        }
+        isRun = false;
+        return true;
+    }
+
+    private boolean handleForUp(Message message) {
+        Object obj = message.obj;
+        Result result = (Result) obj;
+        if(result.isSuccess()) {
+            DataSourceUtils.addUp(goods.getGoodsId());
+            ImageView upImage = findViewById(R.id.click_up);
+            upImage.setBackgroundResource(R.drawable.up);
+        }else {
+            Toast.makeText(getBaseContext(), "点赞失败", Toast.LENGTH_SHORT).show();
+        }
+        isRun = false;
+        return true;
+    }
+
+    private boolean handleForCancelUp(Message message) {
+        Object obj = message.obj;
+        Result result = (Result) obj;
+        if(result.isSuccess()) {
+            DataSourceUtils.cancelUp(goods.getGoodsId());
+            ImageView upImage = findViewById(R.id.click_up);
+            upImage.setBackgroundResource(R.drawable.no_up);
+        }else {
+            Toast.makeText(getBaseContext(), "取消点赞失败", Toast.LENGTH_SHORT).show();
         }
         isRun = false;
         return true;

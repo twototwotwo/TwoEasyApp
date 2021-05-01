@@ -52,9 +52,9 @@ public class DataSourceUtils {
     public static Map<Integer, Order> orderMap = new ConcurrentHashMap<>();
 
     /**
-     * 粉丝id集合
+     * 点赞的物品的id集合
      */
-    public static Set<Integer> fansIdSet = new HashSet<>();
+    public static Set<Integer> upIdSet = new HashSet<>();
 
     /**
      * 已关注用户的id集合
@@ -69,13 +69,15 @@ public class DataSourceUtils {
                             Map<Integer, User> uMap,
                             Map<Integer, Goods> cgMap,
                             Map<Integer, Goods> pgMap,
-                            Set<Integer> fdSet) {
+                            Set<Integer> fdSet,
+                            Set<Integer> upIdSet) {
         commonGoodsMap = cgMap;
         subscribeRecordMap = srMap;
         publishGoodsMap = pgMap;
         orderMap = odMap;
         userMap = uMap;
         followedIdSet = fdSet;
+        upIdSet = upIdSet;
 
         unreadMessageCount = MessageDAO.instance.queryUnReadCount();
     }
@@ -139,11 +141,24 @@ public class DataSourceUtils {
         return followedIdSet != null && followedIdSet.contains(userId);
     }
 
+    public static boolean checkIsUp(int goodsId) {
+        return upIdSet != null && upIdSet.contains(goodsId);
+
+    }
+
     public static void addFollow(int userId) {
         followedIdSet.add(userId);
     }
 
     public static void cancelFollow(int userId) {
         followedIdSet.remove(userId);
+    }
+
+    public static void addUp(int goodsId) {
+        upIdSet.add(goodsId);
+    }
+
+    public static void cancelUp(int goodsId) {
+        upIdSet.remove(goodsId);
     }
 }

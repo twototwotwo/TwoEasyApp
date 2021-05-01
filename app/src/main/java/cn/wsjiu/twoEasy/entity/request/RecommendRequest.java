@@ -1,9 +1,14 @@
 package cn.wsjiu.twoEasy.entity.request;
 
 public class RecommendRequest {
-    Integer userId;
-    int page = -1;
-    int pageSize = 10;
+    private Integer userId;
+    private int page = -1;
+    private int pageSize = 10;
+
+    /**
+     * 用户画像
+     */
+    String userProfile;
 
     public Integer getUserId() {
         return userId;
@@ -27,5 +32,13 @@ public class RecommendRequest {
 
     public void setPageSize(int pageSize) {
         this.pageSize = pageSize;
+    }
+
+    public String getUserProfile() {
+        return userProfile;
+    }
+
+    public void setUserProfile(String userProfile) {
+        this.userProfile = userProfile;
     }
 }

@@ -80,9 +80,20 @@ public class ChatFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        List<String> chatIdList;
+        MessageDAO messageDAO = MessageDAO.instance;
+        chatIdList = messageDAO.queryAllChatId();
+        // TODO 获取交易中
+        adapter.addAll(chatIdList);
+        checkChatId(chatIdList);
+
         updateChatClassificationCount();
     }
 
+    /**
+     * 初始化
+     */
     private void init() {
         RecyclerView userChatRecyclerView = rootView.findViewById(R.id.chat_recycler_view);
         adapter = new UserChatRecyclerAdapter(UserUtils.getUser().getUserId());
@@ -93,13 +104,6 @@ public class ChatFragment extends Fragment {
         userChatRecyclerView.setLayoutManager(manager);
         inTransactionCountView = rootView.findViewById(R.id.transaction_count_view);
         communicateCountView = rootView.findViewById(R.id.communicate_count_view);
-
-        List<String> chatIdList;
-        MessageDAO messageDAO = MessageDAO.instance;
-        chatIdList = messageDAO.queryAllChatId();
-        // TODO 获取交易中
-        adapter.addAll(chatIdList);
-        checkChatId(chatIdList);
     }
 
     private void checkChatId(List<String> chatIdList) {
