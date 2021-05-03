@@ -136,6 +136,11 @@ public class GoodsDetailActivity extends AppCompatActivity {
             followButton.setText("+关注");
         }
 
+        // 物品发布人是自己，隐藏"我想要"按钮
+        if(UserUtils.getUser().getUserId().equals(user.getUserId())) {
+            Button wantButton = findViewById(R.id.want_button);
+            wantButton.setVisibility(View.INVISIBLE);
+        }
     }
 
     public void want(View view) {

@@ -27,7 +27,15 @@ public class TransactionOrderAdapterValid extends BaseValidDataAdapter {
         comparator = new Comparator<Order>() {
             @Override
             public int compare(Order o1, Order o2) {
-                return -(o1.getTime().compareTo(o2.getTime()));
+                int transactionInState = OrderState.TRANSACTION_IN.mask;
+                int res = 0;
+                if(o1.getState() == transactionInState) {
+                    res = -1;
+                }
+                if(o2.getState() == transactionInState) {
+                    res = res < 0 ? -(o1.getTime().compareTo(o2.getTime())) : 1;
+                }
+                return res == 0 ? -(o1.getTime().compareTo(o2.getTime())) : res;
             }
         };
     }
