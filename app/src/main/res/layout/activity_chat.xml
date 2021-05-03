@@ -56,7 +56,7 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
             android:layout_margin="10dp"
-            android:src="@drawable/video_hang_up"
+            android:src="@drawable/switch_icon"
             android:onClick="switchCamera"
             android:scaleType="fitXY"
             android:minHeight="0dp"

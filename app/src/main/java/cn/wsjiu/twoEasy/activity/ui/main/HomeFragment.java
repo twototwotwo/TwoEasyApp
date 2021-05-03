@@ -54,15 +54,7 @@ public class HomeFragment extends Fragment {
     private View latestButton;
     private View recommendButton;
 
-    /**
-     * 是否正在异步进行推荐物品信息获取
-     */
-    private boolean isRecommend = false;
 
-    /**
-     * 是否正在异步进行最新物品信息获取
-     */
-    private boolean isGetLatest = false;
     /**
      * 推荐物品请求的参数对象
      */
@@ -112,12 +104,12 @@ public class HomeFragment extends Fragment {
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if(newState == RecyclerView.SCROLL_STATE_SETTLING &&
-                        !recyclerView.canScrollVertically(1) && !isGetLatest) {
+                        !recyclerView.canScrollVertically(1) && !latestAdapter.isLoading()) {
                     getLatestGoods();
                 }
             }
         });
-        if(!isGetLatest) getLatestGoods();
+        if(!latestAdapter.isLoading()) getLatestGoods();
 
         // 初始化推荐物品的recycler
         recommendRecyclerView = rootView.findViewById(R.id.recommend_goods_recycler_view);
@@ -132,12 +124,12 @@ public class HomeFragment extends Fragment {
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if(newState == RecyclerView.SCROLL_STATE_SETTLING &&
-                        !recyclerView.canScrollVertically(1) && !isRecommend) {
+                        !recyclerView.canScrollVertically(1) && !recommendAdapter.isLoading()) {
                     recommendGoods();
                 }
             }
         });
-        if(!isRecommend) recommendGoods();
+        if(!recommendAdapter.isLoading()) recommendGoods();
 
         latestButton = rootView.findViewById(R.id.latest_goods_button);
         latestButton.setOnClickListener(this::latestOrRecommend);
@@ -149,8 +141,8 @@ public class HomeFragment extends Fragment {
      * 异步分页获取最新物品
      */
     private void getLatestGoods() {
-        if(latestAdapter.isEnd() || isGetLatest) return;
-        isGetLatest = true;
+        if(latestAdapter.isEnd() || latestAdapter.isLoading()) return;
+        latestAdapter.setLoading(true);
         if(latestRequest == null) {
             latestRequest = new RecommendRequest();
             latestRequest.setUserId(UserUtils.getUser().getUserId());
@@ -169,6 +161,7 @@ public class HomeFragment extends Fragment {
      * @return
      */
     private boolean handle(Message msg) {
+        latestAdapter.setLoading(false);
         Object obj = msg.obj;
         Result<JSONObject> result = null;
         List<Goods> list = new ArrayList<>();
@@ -202,10 +195,8 @@ public class HomeFragment extends Fragment {
                 }
             }
             latestAdapter.addItems(list, userMap);
-            isGetLatest = false;
             return true;
         }
-        isGetLatest = false;
         return false;
     }
 
@@ -213,8 +204,8 @@ public class HomeFragment extends Fragment {
      * 异步分页获取推荐物品
      */
     private void recommendGoods() {
-        if(recommendAdapter.isEnd() || isRecommend) return;
-        isRecommend = true;
+        if(recommendAdapter.isEnd() || recommendAdapter.isLoading()) return;
+        recommendAdapter.setLoading(true);
         if(recommendRequest == null) {
             recommendRequest = new RecommendRequest();
             recommendRequest.setUserId(UserUtils.getUser().getUserId());
@@ -234,6 +225,7 @@ public class HomeFragment extends Fragment {
      * @return
      */
     private boolean handleForRecommend(Message msg) {
+        recommendAdapter.setLoading(false);
         Object obj = msg.obj;
         Result<JSONObject> result = null;
         List<Goods> list = new ArrayList<>();
@@ -267,10 +259,8 @@ public class HomeFragment extends Fragment {
                 }
             }
             recommendAdapter.addItems(list, userMap);
-            isRecommend = false;
             return true;
         }
-        isRecommend = false;
         return false;
     }
 

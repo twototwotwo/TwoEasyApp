@@ -46,7 +46,6 @@ public class GoodsDetailActivity extends AppCompatActivity {
      */
     private boolean isRun = false;
 
-    private Button upButton;
     private Button followButton;
 
     @Override

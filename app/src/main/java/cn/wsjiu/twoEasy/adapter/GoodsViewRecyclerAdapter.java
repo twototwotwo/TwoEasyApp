@@ -34,10 +34,15 @@ public class GoodsViewRecyclerAdapter extends Adapter<RecyclerViewHolder> {
     private static final int TYPE_EMPTY = 1 << 2;
     private static final int TYPE_END = 1 << 3;
 
+    // 默认数据为空时、加载、到达底部时的显示
     private View defaultEmptyView;
     private View defaultLoadingView;
     private View defaultEndView;
+
+    // 数据是否已经取尽了
     private boolean isEnd = false;
+    // 是否正在加载数据
+    private boolean isLoading = false;
 
     private List<Goods> goodsList;
     private Map<Integer, User> userMap;
@@ -92,22 +97,18 @@ public class GoodsViewRecyclerAdapter extends Adapter<RecyclerViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewHolder holder, int position) {
-        switch (holder.getItemViewType()) {
-            case TYPE_COMMON:
-                Goods goods = goodsList.get(position);
-                GoodsView goodsView = (GoodsView) holder.itemView;
-                User user = userMap.get(goods.getUserId());
-                goodsView.bindData(goods, user);
-                break;
-            case TYPE_LOADING:
-                break;
+        if(holder.getItemViewType() == TYPE_COMMON) {
+            Goods goods = goodsList.get(position);
+            GoodsView goodsView = (GoodsView) holder.itemView;
+            User user = userMap.get(goods.getUserId());
+            goodsView.bindData(goods, user);
         }
     }
 
     @Override
     public int getItemCount() {
         int size = goodsList != null ? goodsList.size() : 0;
-        return size + 1;
+        return isLoading || isEnd ? size + 1 : size;
     }
 
     @Override
@@ -167,5 +168,14 @@ public class GoodsViewRecyclerAdapter extends Adapter<RecyclerViewHolder> {
 
     public boolean isEnd() {
         return isEnd;
+    }
+
+    public boolean isLoading() {
+        return isLoading;
+    }
+
+    public void setLoading(boolean loading) {
+        isLoading = loading;
+        notifyDataSetChanged();
     }
 }

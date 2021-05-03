@@ -31,7 +31,7 @@ public class IMWebSocket extends WebSocketClient {
      * 用户id
      * websocket握手阶段作为用户session的唯一标识
      */
-    private static String USER_ID = "userId";
+    private static final String USER_ID = "userId";
 
     private String url;
     private Integer userId;
