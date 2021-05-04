@@ -16,6 +16,7 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import java.util.Map;
@@ -141,6 +142,9 @@ public class GoodsDetailActivity extends AppCompatActivity {
             Button wantButton = findViewById(R.id.want_button);
             wantButton.setVisibility(View.INVISIBLE);
         }
+        // 分词获得物品关键字
+        parse();
+
     }
 
     public void want(View view) {
@@ -169,6 +173,17 @@ public class GoodsDetailActivity extends AppCompatActivity {
         }
         url += "?userId=" + user.getUserId() + "&goodsId=" + goods.getGoodsId();
         HttpGetRunnable runnable = new HttpGetRunnable(url, handler);
+        ThreadPoolUtils.asynExecute(runnable);
+    }
+
+    /**
+     * 调用分词api获取关键字
+     */
+    public void parse() {
+        String text = goods.getTitle() + "," + goods.getClassification() + "," + goods.getBrand();
+        String url = getString(R.string.parse_url);
+        url += "?text=" + text;
+        HttpGetRunnable runnable = new HttpGetRunnable(url, new Handler(getMainLooper(), this::handleForParseText));
         ThreadPoolUtils.asynExecute(runnable);
     }
 
@@ -275,6 +290,22 @@ public class GoodsDetailActivity extends AppCompatActivity {
             upImage.setBackgroundResource(R.drawable.no_up);
         }else {
             Toast.makeText(getBaseContext(), "取消点赞失败", Toast.LENGTH_SHORT).show();
+        }
+        isRun = false;
+        return true;
+    }
+
+    private boolean handleForParseText(Message message) {
+        Object obj = message.obj;
+        Result result = (Result) obj;
+        if(result.isSuccess()) {
+            JSONArray keyWordJSONArray = (JSONArray) result.getData();
+            for (int i = 0; i < keyWordJSONArray.size(); i++) {
+                String keyWord = keyWordJSONArray.getString(i);
+                UserUtils.addKeyWord(keyWord);
+            }
+        }else {
+            Toast.makeText(getBaseContext(), "收集失败，" + result.getMsg(), Toast.LENGTH_SHORT).show();
         }
         isRun = false;
         return true;

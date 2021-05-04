@@ -32,6 +32,7 @@
     <string name="follow_user_url">http://www.wsjiu.com:8080/user/follow/</string>
     <string name="cancel_follow_user_url">http://www.wsjiu.com:8080/user/follow/cancel/</string>
     <string name="start_url">http://www.wsjiu.com:8080/app/start/</string>
+    <string name="parse_url">http://192.168.1.109:8080/app/parse/</string>
     <string name="open_eye_call_url">http://www.wsjiu.com:8080/app/openEye/call/</string>
     <string name="open_eye_connect_url">http://www.wsjiu.com:8080/app/openEye/connect/</string>
     <string name="image_upload_url">http://www.wsjiu.com:8080/image/upload/</string>

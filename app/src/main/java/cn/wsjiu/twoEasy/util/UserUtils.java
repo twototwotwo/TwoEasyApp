@@ -17,6 +17,7 @@ import cn.wsjiu.twoEasy.R;
 import cn.wsjiu.twoEasy.entity.Goods;
 import cn.wsjiu.twoEasy.entity.SubscribeRecord;
 import cn.wsjiu.twoEasy.entity.User;
+import cn.wsjiu.twoEasy.entity.UserProfile;
 import cn.wsjiu.twoEasy.result.Result;
 import cn.wsjiu.twoEasy.thread.HttpGetRunnable;
 import cn.wsjiu.twoEasy.thread.threadPool.ThreadPoolUtils;
@@ -31,16 +32,29 @@ public class UserUtils {
     private final static String USER = "user";
 
     /**
+     * 用户画像信息持久化的key
+     */
+    private final static String USER_PROFILE = "userProfile";
+
+    /**
      * 用户信息
      */
     private static User user;
 
+    private static UserProfile userProfile;
 
     public static void init(Context context) {
         if(user == null) {
             SharedPreferences sharedPreferences = context.getSharedPreferences(USER, MODE_PRIVATE);
             String userStr = sharedPreferences.getString(USER, null);
             user = JSONObject.parseObject(userStr, User.class);
+        }
+        if(userProfile == null) {
+            SharedPreferences sharedPreferences = context.getSharedPreferences(USER, MODE_PRIVATE);
+            String userProfileStr = sharedPreferences.getString(USER_PROFILE, null);
+            JSONObject keyWordJSONObject = JSONObject.parseObject(userProfileStr);
+            userProfile = new UserProfile();
+            userProfile.init(keyWordJSONObject);
         }
     }
 
@@ -82,5 +96,18 @@ public class UserUtils {
             user.setHeadUrl(newUser.getHeadUrl());
         }
         saveUser(user, context);
+    }
+
+    public static void addKeyWord(String word) {
+        userProfile.addKeyWord(word, UserProfile.DEFAULT_WEIGHT);
+    }
+
+    public static String getUserProfile() {
+        return userProfile.toString();
+    }
+
+    public static void persistUserProfile(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(USER, MODE_PRIVATE);
+        sharedPreferences.edit().putString(USER_PROFILE, JSONObject.toJSONString(userProfile.getKeyWordMap())).apply();
     }
 }

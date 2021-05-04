@@ -127,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
     public void finish() {
         super.finish();
         unregisterReceiver(receiver);
+        UserUtils.persistUserProfile(this);
     }
 
     private void initLayout() {

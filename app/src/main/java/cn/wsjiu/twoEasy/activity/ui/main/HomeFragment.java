@@ -209,7 +209,7 @@ public class HomeFragment extends Fragment {
         if(recommendRequest == null) {
             recommendRequest = new RecommendRequest();
             recommendRequest.setUserId(UserUtils.getUser().getUserId());
-            recommendRequest.setUserProfile("小米 64G");
+            recommendRequest.setUserProfile(UserUtils.getUserProfile());
         }
         recommendRequest.setPage(recommendRequest.getPage() + 1);
         String url = getResources().getString(R.string.goods_recommend_url);
@@ -245,9 +245,6 @@ public class HomeFragment extends Fragment {
                 }
                 for(int i = 0; i < goodsJSONArray.size(); i++) {
                     list.add(goodsJSONArray.getObject(i, Goods.class));
-                }
-                if(list.size() < recommendRequest.getPageSize()) {
-                    recommendAdapter.setEnd(true);
                 }
                 String userKey = "user";
                 JSONObject usersJSOBject = dataJSONObject.getJSONObject(userKey);
