@@ -231,35 +231,31 @@ public class SearchGoodsFragment extends Fragment {
     private boolean handlerForRank(Message msg) {
         isSearch =false;
         Object obj = msg.obj;
-        Result<JSONArray> result = null;
+        Result<JSONObject> result = null;
         List<Goods> list = new ArrayList<>();
         Map<Integer, User> userMap = new HashMap<>();
         if (obj instanceof Result) {
-            result = (Result<JSONArray>) obj;
+            result = (Result<JSONObject>) obj;
         }
         if(result != null && result.isSuccess()) {
-//            JSONObject dataJSONObject = result.getData();
-//            if(dataJSONObject != null) {
-//                String goodsKey = "goods";
-//                JSONArray goodsJSONArray = dataJSONObject.getJSONArray(goodsKey);
-//                rankAdapter.setEnd(true);
-//                for(int i = 0; i < goodsJSONArray.size(); i++) {
-//                    list.add(goodsJSONArray.getObject(i, Goods.class));
-//                }
-//                String userKey = "user";
-//                JSONObject usersJSONObject = dataJSONObject.getJSONObject(userKey);
-//                for(String key : usersJSONObject.keySet()) {
-//                    User user = usersJSONObject.getObject(key, User.class);
-//                    if(user != null) {
-//                        userMap.put(Integer.parseInt(key), user);
-//                    }
-//                }
-//            }
-            JSONArray goodsJSONArray = result.getData();
-            rankAdapter.setEnd(true);
-            for(int i = 0; i < goodsJSONArray.size(); i++) {
-                list.add(goodsJSONArray.getObject(i, Goods.class));
+            JSONObject dataJSONObject = result.getData();
+            if(dataJSONObject != null) {
+                String goodsKey = "goods";
+                JSONArray goodsJSONArray = dataJSONObject.getJSONArray(goodsKey);
+                rankAdapter.setEnd(true);
+                for(int i = 0; i < goodsJSONArray.size(); i++) {
+                    list.add(goodsJSONArray.getObject(i, Goods.class));
+                }
+                String userKey = "user";
+                JSONObject usersJSONObject = dataJSONObject.getJSONObject(userKey);
+                for(String key : usersJSONObject.keySet()) {
+                    User user = usersJSONObject.getObject(key, User.class);
+                    if(user != null) {
+                        userMap.put(Integer.parseInt(key), user);
+                    }
+                }
             }
+            rankAdapter.setEnd(true);
             rankAdapter.addItems(list, userMap);
             return true;
         }
